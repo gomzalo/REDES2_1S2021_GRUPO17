@@ -5,12 +5,6 @@
 	<title>Carga de reportes</title>
 	<script src="JS/jquery-3.6.0.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="JS/bootstrap.css">
-	<!--
-		404052
-		585880
-		6d6d81
-		51444a
-	-->
 </head>
 <body>
 	<script type="text/javascript">
@@ -65,6 +59,11 @@
 				$('#txtCursoProyecto').val('');
 				$('#txtCuerpo').val('');
 			}
+
+			//restringe la entrada solo a numeros
+			$('#txtCarnet').on('input', function () { 
+			    this.value = this.value.replace(/[^0-9]/g,'');
+			});
 
 
 		});

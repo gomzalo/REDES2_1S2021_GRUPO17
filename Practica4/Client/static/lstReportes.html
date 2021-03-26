@@ -17,18 +17,6 @@
 
 				if(validar(carnet)){
 					alert("campos validados");
-					var settings = {
-						"url": "http://localhost:4000/dato",
-						"method": "GET",
-						"timeout": 0,
-					};
-
-					$.ajax(settings).done(function (response) {
-						console.log(response);
-						var myTextArea = document.getElementById('textareaResult');
-						myTextArea.innerHTML = response;
-						
-					});
 					limpiar();
 				}
 
@@ -75,9 +63,7 @@
 		</table>
 		<br>
 		<table align="center">
-			<tr><td>
-				<textarea id="textareaResult" rows="10" cols="50"></textarea>
-			</td></tr>
+			
 		</table>
 	</form>
 

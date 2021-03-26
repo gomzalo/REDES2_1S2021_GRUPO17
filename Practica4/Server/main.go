@@ -80,8 +80,8 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
 		// registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Fecha + " - " + emp.Cuerpo + "\n"
-		// reportes = append(reportes, emp)
-		// json.NewEncoder(w).Encode(emp)
+		reportes = append(reportes, emp)
+		json.NewEncoder(log.Writer()).Encode(emp)
 		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Cuerpo + "\n"
 	}
 	json.NewEncoder(w).Encode(reportes)

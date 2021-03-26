@@ -59,6 +59,7 @@ func MensajeHandler(w http.ResponseWriter, request *http.Request) {
 func DatosHandler(w http.ResponseWriter, request *http.Request) {
 	enableCors(&w)
 	log.Println("DatosHandler")
+
 	results, err := db_handler.Query("SELECT Carnet, Nombre, Curso, Cuerpo FROM Reporte")
 	// results, err := db_handler.Query("SELECT Carnet, Nombre, Curso, Fecha, Cuerpo FROM Reporte")
 	// results, err := db_handler.Query("SELECT EmployeeId, FirstName FROM EMPLOYEE")
@@ -66,10 +67,12 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	registros := ""
+
 	log.Println("Resultados: ", results)
 	for results.Next() {
 
 		var emp Reporte
+
 		// for each row, scan the result into Reporte object
 		// err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Fecha, &emp.Cuerpo)
 		err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Cuerpo)
@@ -77,12 +80,15 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
 		// registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Fecha + " - " + emp.Cuerpo + "\n"
+		// reportes = append(reportes, emp)
+		// json.NewEncoder(w).Encode(emp)
 		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Cuerpo + "\n"
 	}
+	json.NewEncoder(w).Encode(reportes)
 	registros = registros + mensaje
 
-	log.Println("Registros: ", registros)
-	w.Write([]byte(registros))
+	log.Println("Registros: ", reportes)
+	// w.Write([]byte(registros))
 }
 
 // ::::::::::::::::::: 	ENDPOINTS PRACTICA	 :::::::::::::::::::
@@ -266,4 +272,6 @@ func main() {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }

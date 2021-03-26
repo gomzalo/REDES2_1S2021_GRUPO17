@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Carga de reportes</title>
+	<script src="JS/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="JS/bootstrap.css">
+</head>
+<body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			$('#lstReporte').on("submit",function(e){
+
+				e.preventDefault();
+				var carnet = $('#txtCarnet').val();
+
+				if(validar(carnet)){
+					alert("campos validados");
+					var settings = {
+						"url": "http://localhost:4000/dato",
+						"method": "GET",
+						"timeout": 0,
+					};
+
+					$.ajax(settings).done(function (response) {
+						console.log(response);
+						var myTextArea = document.getElementById('textareaResult');
+						myTextArea.innerHTML = response;
+						
+					});
+					limpiar();
+				}
+
+			});
+
+			function validar(carnet, nombre, curso_proyecto, cuerpo){
+
+				if(carnet == ""){
+					alert("Ingrese un carnet.");
+					$('#txtCarnet').focus();
+					return false; 
+				}
+
+				return true;
+			}
+
+			function limpiar(){
+				$('#txtCarnet').val('');
+			}
+
+			$('#txtCarnet').on('input', function () { 
+			    this.value = this.value.replace(/[^0-9]/g,'');
+			});
+
+		});
+	</script>
+	<form id="lstReporte" name="lstReporte">
+		<br>
+		<h1 align="center">Listado de Reportes</h1>
+		<br>
+		<table align="center">
+			
+
+			<tr id="divCarnet" name="divCarnet">
+				<td>Carnet</td>
+				<td>
+					<input  id="txtCarnet" name="txtCarnet" style="width: 423px" placeholder="Ingresa un carnet">
+				</td>
+				<td>
+					<button type="submit" id="btnEnviar" name="btnEnviar" class="btn btn-secondary btn-lg">Buscar</button>
+				</td>
+			</tr>
+
+		</table>
+		<br>
+		<table align="center">
+			<tr><td>
+				<textarea id="textareaResult" rows="10" cols="50"></textarea>
+			</td></tr>
+		</table>
+	</form>
+
+</body>
+</html>

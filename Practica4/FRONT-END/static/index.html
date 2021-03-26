@@ -5,12 +5,6 @@
 	<title>Carga de reportes</title>
 	<script src="JS/jquery-3.6.0.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="JS/bootstrap.css">
-	<!--
-		404052
-		585880
-		6d6d81
-		51444a
-	-->
 </head>
 <body>
 	<script type="text/javascript">
@@ -26,7 +20,22 @@
 
 				if(validar(carnet, nombre, curso_proyecto, cuerpo)){
 					alert("campos validados");
-					limpiar();
+					var settings = {
+						"url": "https://localhost:4000/crearreporte",
+						"method": "POST",
+						"timeout": 0,
+						"headers": {
+							"Access-Control-Allow-Headers": "Authorization",
+							"Content-Type": "application/json"
+						},
+						"data": JSON.stringify({"Carnet":2000000,"Nombre":"Dianita3","Curso":"Analisis3","Fecha":"26/03/2021","Cuerpo":"kjfklasdmflk"}),
+					};
+					console.log(settings.data);
+					$.ajax(settings).done(function (response) {
+						alert(response);
+						location.reload(); 
+					});
+					//limpiar();
 				}
 
 			});
@@ -65,6 +74,11 @@
 				$('#txtCursoProyecto').val('');
 				$('#txtCuerpo').val('');
 			}
+
+			//restringe la entrada solo a numeros
+			$('#txtCarnet').on('input', function () { 
+			    this.value = this.value.replace(/[^0-9]/g,'');
+			});
 
 
 		});

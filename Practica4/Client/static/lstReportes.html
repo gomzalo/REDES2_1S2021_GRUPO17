@@ -16,7 +16,7 @@
 <body>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$('#userTable').hide();
+			//$('#userTable').hide();
 
 			$('#lstReporte').on("submit",function(e){
 
@@ -25,12 +25,9 @@
 
 				if(validar(carnet)){
 
-					alert("campos validados");
-
-					//alert("campos validados");
-
 					$.ajax({
-						url: 'https://reqres.in/api/users?page='+ carnet,
+						//url: 'https://reqres.in/api/users?page='+ 0,
+						url: 'localhost:4000/dato',
 						type: 'GET',
 						success: function(res){
 							if(res.data.length == 0){
@@ -41,7 +38,7 @@
 								var tabla;
 								for(var i = 0; i < res.data.length; i++){
 									console.log(res.data[i]);
-									tabla+=  '<tr><td>' + res.data[i].id + '</td><td>' + res.data[i].email + '</td><td>' + res.data[i].first_name + '</td><td>'+ res.data[i].last_name + '</td><td>' + res.data[i].avatar + '</td><tr>' ;
+									tabla+=  '<tr><td>' + res.dato[i].Carnet + '</td><td>' + res.dato[i].Nombre + '</td><td>' + res.dato[i].Curso + '</td><td>'+ res.dato[i].Fecha + '</td><td>' + res.dato[i].Cuerpo + '</td><tr>' ;
 								}
 								$('#tbody').html(tabla);
 							}
@@ -75,11 +72,11 @@
 
 			function validar(carnet){
 
-				if(carnet == ""){
+				/*if(carnet == ""){
 					alert("Ingrese un carnet.");
 					$('#txtCarnet').focus();
 					return false; 
-				}
+				}*/
 
 				return true;
 			}
@@ -125,11 +122,11 @@
 					<table id="userTable" class="table-striped table-bordered" style="width: 100%">
 						<thead>
 							<tr>
-								<th>Id</th>
-								<th>Email</th>
-								<th>Nombres</th>
-								<th>Apellidos</th>
-								<th>Avatar</th>
+								<th>Carnet</th>
+								<th>Nombre</th>
+								<th>Curso</th>
+								<th>Fecha</th>
+								<th>Cuerpo</th>
 							</tr>
 						</thead>
 						<tbody id="tbody">

@@ -19,7 +19,7 @@
 				var cuerpo = $('#txtCuerpo').val();
 
 				if(validar(carnet, nombre, curso_proyecto, cuerpo)){
-					alert("campos validados");
+					//alert("campos validados");
 					var settings = {
 						"url": "https://localhost:4000/crear",
 						"method": "POST",
@@ -80,6 +80,10 @@
 			    this.value = this.value.replace(/[^0-9]/g,'');
 			});
 
+			$('#btnRegresar').click(function(){
+					window.location.href = "index.html";
+					return false;
+			});
 
 		});
 	</script>
@@ -118,7 +122,8 @@
 		</table>
 		<br>
 		<center>
-			<button type="submit" id="btnEnviar" name="btnEnviar" class="btn btn-secondary btn-lg">Enviar</button>
+			<button type="button" id="btnRegresar" name="btnRegresar" class="btn btn-secondary btn-lg">Regresar</button>
+			<button type="submit" id="btnEnviar" name="btnEnviar" class="btn btn-secondary btn-lg">Enviar</button>	
 		</center>
 		<table align="center">
 			

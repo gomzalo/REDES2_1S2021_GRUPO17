@@ -29,6 +29,12 @@ type Reporte struct {
 	Cuerpo string `json:"Cuerpo"`
 }
 
+type CarnetE struct {
+	Carnet int `json:"Carnet"`
+}
+
+var carnets []CarnetE
+
 var reportes []Reporte
 
 var nombre_servidor = "default"
@@ -53,7 +59,8 @@ func MensajeHandler(w http.ResponseWriter, request *http.Request) {
 func DatosHandler(w http.ResponseWriter, request *http.Request) {
 	enableCors(&w)
 	log.Println("DatosHandler")
-	results, err := db_handler.Query("SELECT Carnet, Nombre FROM Reporte")
+	results, err := db_handler.Query("SELECT Carnet, Nombre, Curso, Cuerpo FROM Reporte")
+	// results, err := db_handler.Query("SELECT Carnet, Nombre, Curso, Fecha, Cuerpo FROM Reporte")
 	// results, err := db_handler.Query("SELECT EmployeeId, FirstName FROM EMPLOYEE")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
@@ -64,11 +71,13 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 
 		var emp Reporte
 		// for each row, scan the result into Reporte object
-		err = results.Scan(&emp.Carnet, &emp.Nombre)
+		// err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Fecha, &emp.Cuerpo)
+		err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Cuerpo)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
-		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + "\n"
+		// registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Fecha + " - " + emp.Cuerpo + "\n"
+		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Cuerpo + "\n"
 	}
 	registros = registros + mensaje
 
@@ -89,7 +98,7 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 
 	// Ingresando a BD
 
-	query := "INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?);"
 
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
@@ -128,6 +137,14 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 
 func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "appliction/json")
+	// var nuevoCarnet CarnetE
+	// json.NewDecoder(request.Body).Decode(&nuevoCarnet)
+	// // nuevoReporte.Carnet = (len(reportes) + 1)
+	// carnets = append(carnets, nuevoCarnet)
+	// json.NewEncoder(w).Encode(nuevoCarnet)
+	// // Obteniendo datos de reporte
+	// log.Println("Carnets: ", carnets)
+
 	var nuevoReporte Reporte
 	json.NewDecoder(request.Body).Decode(&nuevoReporte)
 	// nuevoReporte.Carnet = (len(reportes) + 1)
@@ -138,38 +155,23 @@ func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
 
 	// Ingresando a BD
 
-	query := "SELECT * FROM Reporte WHERE Carnet = ?"
-
-	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancelfunc()
-	stmt, err := db_handler.PrepareContext(ctx, query)
-	if err != nil {
-		log.Printf("Error %s when preparing SQL statement", err)
-		// return err
-	}
-	defer stmt.Close()
-	res, err := stmt.ExecContext(ctx, nuevoReporte.Carnet)
-	if err != nil {
-		log.Printf("Error %s when inserting row into products table", err)
-		// return err
-	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		log.Printf("Error %s when finding rows affected", err)
-		// return err
-	}
-	log.Printf("%d Reporte econtrado ", rows)
-	prdID, err := res.LastInsertId()
-	if err != nil {
-		log.Printf("Error %s when getting last inserted product", err)
-		// return err
-	}
-	log.Printf("Product with ID %d created", prdID)
-	// return nil
+	query := "SELECT * FROM Reporte WHERE Carnet = ?;"
+	row, err := db_handler.Query(query, nuevoReporte.Carnet)
 
 	// *****************
+	if err != nil {
+		// panic(err.Error()) // proper error handling instead of panic in your app
+		log.Fatal(err)
+	}
+	defer row.Close()
+	for row.Next() {
+		row.Scan(&nuevoReporte.Carnet, &nuevoReporte.Nombre, &nuevoReporte.Curso, &nuevoReporte.Fecha, &nuevoReporte.Cuerpo)
+		json.NewEncoder(w).Encode(nuevoReporte)
+	}
 	w.WriteHeader(http.StatusCreated)
-	// w.Write([]byte(`{"message": "post called"}`))
+	// nombre_servidor = os.Getenv("ID_SERVIDOR")
+	mensaje = "Solicitud atendida por el servidor: " + nombre_servidor
+	w.Write([]byte(`{"message":` + `"` + mensaje + `"}`))
 }
 
 func MostrarReporteHandler(w http.ResponseWriter, request *http.Request) {
@@ -225,8 +227,8 @@ func main() {
 	router.HandleFunc("/mensaje", MensajeHandler).Methods("GET")
 	router.HandleFunc("/dato", DatosHandler).Methods("GET")
 	router.HandleFunc("/crear", CrearReporteHandler).Methods("POST")
-	router.HandleFunc("/buscar/{carnet}", BuscarReporteHandler).Methods("GET")
-	router.HandleFunc("/mostrar", MostrarReporteHandler).Methods("GET")
+	router.HandleFunc("/buscar", BuscarReporteHandler).Methods("POST")
+	router.HandleFunc("/mostrar", MostrarReporteHandler).Methods("POST")
 	// BD
 	nombre_servidor = os.Getenv("ID_SERVIDOR")
 	mensaje = "Hola! te saluda el servidor " + nombre_servidor

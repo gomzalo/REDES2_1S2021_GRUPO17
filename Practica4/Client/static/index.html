@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<title>Carga de reportes</title>
+	<title>Practica_4 Inicio</title>
 	<script src="JS/jquery-3.6.0.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="JS/bootstrap.css">
 </head>
@@ -10,119 +10,66 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 
-			$('#archivos').on("submit",function(e){
-
-				e.preventDefault();
-				var carnet = $('#txtCarnet').val();
-				var nombre = $('#txtNombre').val();
-				var curso_proyecto = $('#txtCursoProyecto').val();
-				var cuerpo = $('#txtCuerpo').val();
-
-				if(validar(carnet, nombre, curso_proyecto, cuerpo)){
-					alert("campos validados");
-					var settings = {
-						"url": "https://localhost:4000/crear",
-						"method": "POST",
-						"timeout": 0,
-						"headers": {
-							"Access-Control-Allow-Headers": "Authorization",
-							"Content-Type": "application/json"
-						},
-						"data": JSON.stringify({"Carnet":2000000,"Nombre":"Dianita3","Curso":"Analisis3","Fecha":"26/03/2021","Cuerpo":"kjfklasdmflk"}),
-					};
-					console.log(settings.data);
-					$.ajax(settings).done(function (response) {
-						alert(response);
-						location.reload(); 
-					});
-					//limpiar();
-				}
-
+			$('#btnCarga').click(function(){
+				window.location.href = "CargarReporte.html";
+				return false;
 			});
 
-			function validar(carnet, nombre, curso_proyecto, cuerpo){
-
-				if(carnet == ""){
-					alert("Ingrese un carnet.");
-					$('#txtCarnet').focus();
-					return false; 
-				}
-
-				if(nombre == ""){
-					alert("Ingrse un nombre.");
-					$('#txtNombre').focus();
-					return false;
-				}
-
-				if(curso_proyecto == ""){
-					alert("Ingrese el nombre de curso/proyecto.")
-					$('#txtCursoProyecto').focus();
-					return false;
-				}
-				if(cuerpo == ""){
-					alert("Ingrese el cuerpo del reporte.")
-					$('#txtCuerpo').focus();
-					return false;
-				}
-
-				return true;
-			}
-
-			function limpiar(){
-				$('#txtCarnet').val('');
-				$('#txtNombre').val('');
-				$('#txtCursoProyecto').val('');
-				$('#txtCuerpo').val('');
-			}
-
-			//restringe la entrada solo a numeros
-			$('#txtCarnet').on('input', function () { 
-			    this.value = this.value.replace(/[^0-9]/g,'');
+			$('#btnLstRep').click(function(){
+				window.location.href = "lstReportes.html";
 			});
 
+			$('#btnRep').click(function(){
+				window.location.href = "vistaReporte.html";
+			});
 
 		});
 	</script>
 	<form id="archivos" name="archivos">
 		<br>
-		<h1 align="center">Ingreso de Reportes de Practicantes</h1>
+		<h1 align="center">Practica 4</h1>
+		<h2 align="center">Grupo 17</h2>
 		<br>
-		<table align="center">
-			
-
-			<tr id="divCarnet" name="divCarnet">
-				<td>Carnet</td>
-				<td>
-					<input  id="txtCarnet" name="txtCarnet" style="width: 423px" placeholder="Ingresa un carnet">
-				</td>
-			</tr>
-			<tr id="divNombre" name="divNombre">
-				<td  >Nombre</td>
-				<td >
-					<input id="txtNombre" name="txtNombre" style="width: 423px" placeholder="Ingresa un nombre">
-				</td>
-			</tr>
-			<tr id="divCursoProyecto" name="divCursoProyecto">
-				<td  >Curso/Proyecto</td>
-				<td >
-					<input id="txtCursoProyecto"  name="txtCursoProyecto" style="width: 423px" placeholder="Nombre del Curso/Proyecto">
-				</td>
-			</tr>
-			<tr>
-				<td >Cuerpo del reporte</td>
-				<td >
-					<textarea id="txtCuerpo" name="txtCuerpo" style="width: 423px; resize: none;" rows="10" cols="50" placeholder="Descripcion...."></textarea>
-				</td>
-			</tr>
-
-		</table>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h2 align="center">Integrantes</h2>
+					<table id="userTable" class="table-striped table-bordered" style="width: 100%">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Carnet</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Gonzalo Garcia</th>
+								<td>201318652</th>
+							</tr>
+							<tr>
+								<td>Juan Pablo Montúfar</th>
+								<td>200413657</th>
+							</tr>
+							<tr>
+								<td>Eduardo Ajsivinac</th>
+								<td>201503584</th>
+							</tr>
+							<tr>
+								<td>Johnny Bravo</th>
+								<td>200517803</th>
+							</tr>
+						</tbody>
+						
+					</table>
+				</div>
+			</div>		
+		</div>
 		<br>
 		<center>
-			<button type="submit" id="btnEnviar" name="btnEnviar" class="btn btn-secondary btn-lg">Enviar</button>
+			<button type="button" id="btnCarga" name="btnCarga" class="btn btn-secondary btn-lg">Cargar Reporte</button>
+			<button type="button" id="btnLstRep" name="btnLstRep" class="btn btn-secondary btn-lg">Ver Reportes</button>
+			<button type="button" id="btnRep" name="btnRep" class="btn btn-secondary btn-lg">Reporte individual</button>
 		</center>
-		<table align="center">
-			
-		</table>
 	</form>
 
 </body>

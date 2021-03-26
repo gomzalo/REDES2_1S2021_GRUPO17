@@ -61,13 +61,7 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 	registros := ""
 	log.Println("Resultados: ", results)
 	for results.Next() {
-		// var emp ESTUDIANTE
-		// // for each row, scan the result into ESTUDIANTE object
-		// err = results.Scan(&emp.Id, &emp.Name)
-		// if err != nil {
-		// 	panic(err.Error()) // proper error handling instead of panic in your app
-		// }
-		// registros = registros + strconv.Itoa(emp.Id) + " - " + emp.Name + "\n"
+
 		var emp Reporte
 		// for each row, scan the result into Reporte object
 		err = results.Scan(&emp.Carnet, &emp.Nombre)
@@ -85,24 +79,27 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 // ::::::::::::::::::: 	ENDPOINTS PRACTICA	 :::::::::::::::::::
 func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "appliction/json")
-	var r Reporte
-	json.NewDecoder(request.Body).Decode(&r)
-	r.Carnet = len(reportes) + 1
-	reportes = append(reportes, r)
-	json.NewEncoder(w).Encode(r)
-	enableCors(&w)
-	log.Println("DatosHandler")
-	query := "INSERT INTO Reporte (Carnet, Nombre, Curso, Cuerpo) VALUES (?, ?, ?, ?, ?);"
+	var nuevoReporte Reporte
+	json.NewDecoder(request.Body).Decode(&nuevoReporte)
+	// nuevoReporte.Carnet = (len(reportes) + 1)
+	reportes = append(reportes, nuevoReporte)
+	json.NewEncoder(w).Encode(nuevoReporte)
+	// Obteniendo datos de reporte
+	log.Println("Reportes: ", reportes)
+
+	// Ingresando a BD
+
+	query := "INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?)"
+
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
-	// results, err := db_handler.ExecContext("SELECT Carnet, Nombre FROM Reporte")
 	stmt, err := db_handler.PrepareContext(ctx, query)
 	if err != nil {
 		log.Printf("Error %s when preparing SQL statement", err)
 		// return err
 	}
 	defer stmt.Close()
-	res, err := stmt.ExecContext(ctx, r.Carnet, r.Nombre, r.Curso, r.Fecha, r.Cuerpo)
+	res, err := stmt.ExecContext(ctx, nuevoReporte.Carnet, nuevoReporte.Nombre, nuevoReporte.Curso, nuevoReporte.Fecha, nuevoReporte.Cuerpo)
 	if err != nil {
 		log.Printf("Error %s when inserting row into products table", err)
 		// return err
@@ -120,15 +117,19 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 	}
 	log.Printf("Product with ID %d created", prdID)
 	// return nil
-	w.Write([]byte("registros"))
+
+	// *****************
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"message": "post called"}`))
 }
+
 func main() {
 	router := mux.NewRouter()
 	// Endpoints
 	router.HandleFunc("/siu", PruebaHandler).Methods("GET")
 	router.HandleFunc("/mensaje", MensajeHandler).Methods("GET")
 	router.HandleFunc("/dato", DatosHandler).Methods("GET")
-	router.HandleFunc("/crear_reporte", CrearReporteHandler).Methods("POST")
+	router.HandleFunc("/crearreporte", CrearReporteHandler).Methods("POST")
 	// BD
 	nombre_servidor = os.Getenv("ID_SERVIDOR")
 	mensaje = "Hola! te saluda el servidor " + nombre_servidor
@@ -141,16 +142,7 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 	db_name := os.Getenv("DB_NAME")
-	// database, err := db.Initialize(usuario, pass, db_name)
 
-	// if err != nil {
-	// 	log.Fatalf("No se pudo conectar a la BD: %v", err)
-	// 	panic(err.Error())
-	// } else {
-	// 	db_handler = database.Conn
-	// 	log.Println("aaaaaa")
-	// }
-	// defer database.Conn.Close()
 	conn_string := usuario + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db_name
 	db, err := sql.Open("mysql", conn_string)
 

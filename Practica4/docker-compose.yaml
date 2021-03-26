@@ -96,7 +96,7 @@ services:
   client:
     build: ./Client
     ports:
-      - "5004:8080"
+      - "8080:8080"
     networks: 
       - red-client
 

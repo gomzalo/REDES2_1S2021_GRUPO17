@@ -87,6 +87,7 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 
 // ::::::::::::::::::: 	ENDPOINTS PRACTICA	 :::::::::::::::::::
 func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "appliction/json")
 	var nuevoReporte Reporte
 	json.NewDecoder(request.Body).Decode(&nuevoReporte)
@@ -136,6 +137,7 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 }
 
 func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "appliction/json")
 	// var nuevoCarnet CarnetE
 	// json.NewDecoder(request.Body).Decode(&nuevoCarnet)
@@ -175,6 +177,7 @@ func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
 }
 
 func MostrarReporteHandler(w http.ResponseWriter, request *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "appliction/json")
 	var nuevoReporte Reporte
 	json.NewDecoder(request.Body).Decode(&nuevoReporte)

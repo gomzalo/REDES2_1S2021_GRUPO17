@@ -1,6 +1,6 @@
 /***CREATING ALL TABLES*/
 CREATE TABLE Reporte(
-        Carnet INT PRIMARY KEY NOT NULL,
+        Carnet INT NOT NULL,
         Nombre VARCHAR(50) NULL,
         Curso VARCHAR(50) NULL,
         Fecha VARCHAR(100) NULL,

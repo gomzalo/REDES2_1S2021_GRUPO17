@@ -99,6 +99,101 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 		// return err
 	}
 	defer stmt.Close()
+	// current_time := time.Now().Local()
+	// current_time = current_time.Format("01-02-2006 15:04:05")
+	// nuevoReporte.Fecha = current_time.String()
+	res, err := stmt.ExecContext(ctx, nuevoReporte.Carnet, nuevoReporte.Nombre, nuevoReporte.Curso, nuevoReporte.Fecha, nuevoReporte.Cuerpo)
+	if err != nil {
+		log.Printf("Error %s when inserting row into products table", err)
+		// return err
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		log.Printf("Error %s when finding rows affected", err)
+		// return err
+	}
+	log.Printf("%d Reporte creado ", rows)
+	prdID, err := res.LastInsertId()
+	if err != nil {
+		log.Printf("Error %s when getting last inserted product", err)
+		// return err
+	}
+	log.Printf("Reporte del carnte %d creado", prdID)
+	// return nil
+
+	// *****************
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"message": "post called"}`))
+}
+
+func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
+	w.Header().Set("Content-Type", "appliction/json")
+	var nuevoReporte Reporte
+	json.NewDecoder(request.Body).Decode(&nuevoReporte)
+	// nuevoReporte.Carnet = (len(reportes) + 1)
+	reportes = append(reportes, nuevoReporte)
+	json.NewEncoder(w).Encode(nuevoReporte)
+	// Obteniendo datos de reporte
+	log.Println("Reportes: ", reportes)
+
+	// Ingresando a BD
+
+	query := "SELECT * FROM Reporte WHERE Carnet = ?"
+
+	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelfunc()
+	stmt, err := db_handler.PrepareContext(ctx, query)
+	if err != nil {
+		log.Printf("Error %s when preparing SQL statement", err)
+		// return err
+	}
+	defer stmt.Close()
+	res, err := stmt.ExecContext(ctx, nuevoReporte.Carnet)
+	if err != nil {
+		log.Printf("Error %s when inserting row into products table", err)
+		// return err
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		log.Printf("Error %s when finding rows affected", err)
+		// return err
+	}
+	log.Printf("%d Reporte econtrado ", rows)
+	prdID, err := res.LastInsertId()
+	if err != nil {
+		log.Printf("Error %s when getting last inserted product", err)
+		// return err
+	}
+	log.Printf("Product with ID %d created", prdID)
+	// return nil
+
+	// *****************
+	w.WriteHeader(http.StatusCreated)
+	// w.Write([]byte(`{"message": "post called"}`))
+}
+
+func MostrarReporteHandler(w http.ResponseWriter, request *http.Request) {
+	w.Header().Set("Content-Type", "appliction/json")
+	var nuevoReporte Reporte
+	json.NewDecoder(request.Body).Decode(&nuevoReporte)
+	// nuevoReporte.Carnet = (len(reportes) + 1)
+	reportes = append(reportes, nuevoReporte)
+	json.NewEncoder(w).Encode(nuevoReporte)
+	// Obteniendo datos de reporte
+	log.Println("Reportes: ", reportes)
+
+	// Ingresando a BD
+
+	query := "INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?)"
+
+	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelfunc()
+	stmt, err := db_handler.PrepareContext(ctx, query)
+	if err != nil {
+		log.Printf("Error %s when preparing SQL statement", err)
+		// return err
+	}
+	defer stmt.Close()
 	res, err := stmt.ExecContext(ctx, nuevoReporte.Carnet, nuevoReporte.Nombre, nuevoReporte.Curso, nuevoReporte.Fecha, nuevoReporte.Cuerpo)
 	if err != nil {
 		log.Printf("Error %s when inserting row into products table", err)
@@ -129,7 +224,9 @@ func main() {
 	router.HandleFunc("/siu", PruebaHandler).Methods("GET")
 	router.HandleFunc("/mensaje", MensajeHandler).Methods("GET")
 	router.HandleFunc("/dato", DatosHandler).Methods("GET")
-	router.HandleFunc("/crearreporte", CrearReporteHandler).Methods("POST")
+	router.HandleFunc("/crear", CrearReporteHandler).Methods("POST")
+	router.HandleFunc("/buscar/{carnet}", BuscarReporteHandler).Methods("GET")
+	router.HandleFunc("/mostrar", MostrarReporteHandler).Methods("GET")
 	// BD
 	nombre_servidor = os.Getenv("ID_SERVIDOR")
 	mensaje = "Hola! te saluda el servidor " + nombre_servidor

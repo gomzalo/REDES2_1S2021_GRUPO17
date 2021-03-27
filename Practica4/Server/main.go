@@ -36,7 +36,7 @@ type CarnetE struct {
 
 var carnets []CarnetE
 
-var reportes []Reporte
+// var reportes []Reporte
 
 type reporteJSON struct {
 	reportes []Reporte
@@ -72,6 +72,10 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	registros := ""
+	var reportes []Reporte
+	var msj Reporte
+	msj.Cuerpo = mensaje
+	reportes = append(reportes, msj)
 
 	log.Println("Resultados: ", results)
 	for results.Next() {
@@ -88,18 +92,20 @@ func DatosHandler(w http.ResponseWriter, request *http.Request) {
 
 	// json.NewEncoder(log.Writer()).Encode(reportes)
 	json.NewEncoder(w).Encode(reportes)
-	registros = registros + mensaje
+	// registros = registros + mensaje
 
 	log.Println("Registros: ", reportes)
-	// w.Write([]byte(registros))
+	// w.Write([]byte("[{ \"mensaje\": \"" + mensaje + "\"}]"))
 }
 
 // ::::::::::::::::::: 	ENDPOINTS PRACTICA	 :::::::::::::::::::
 func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 	enableCors(&w)
 	(w).Header().Set("Access-Control-Allow-Origin", "*")
+	(w).Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	(w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 	w.Header().Set("Content-Type", "appliction/json")
-
+	var reportes []Reporte
 	carnet_, ok := request.URL.Query()["Carnet"]
 	curso_, ok := request.URL.Query()["Curso"]
 	nombre_, ok := request.URL.Query()["Nombre"]
@@ -163,7 +169,7 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 
 	// *****************
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(`{"message": "post called"}`))
+	w.Write([]byte(`{"message": "Reporte ingresado"}`))
 }
 
 func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
@@ -241,6 +247,7 @@ func MostrarReporteHandler(w http.ResponseWriter, request *http.Request) {
 	var nuevoReporte Reporte
 	json.NewDecoder(request.Body).Decode(&nuevoReporte)
 	// nuevoReporte.Carnet = (len(reportes) + 1)
+	var reportes []Reporte
 	reportes = append(reportes, nuevoReporte)
 	json.NewEncoder(w).Encode(nuevoReporte)
 	// Obteniendo datos de reporte
@@ -290,7 +297,7 @@ func main() {
 	router.HandleFunc("/dato", DatosHandler).Methods("GET")
 	router.HandleFunc("/crear", CrearReporteHandler).Methods("GET")
 	router.HandleFunc("/buscar/{carnet}", BuscarReporteHandler).Methods("GET")
-	router.HandleFunc("/mostrar", MostrarReporteHandler).Methods("POST")
+	router.HandleFunc("/mostrar", MostrarReporteHandler).Methods("GET")
 	// BD
 	nombre_servidor = os.Getenv("ID_SERVIDOR")
 	mensaje = "Hola! te saluda el servidor " + nombre_servidor

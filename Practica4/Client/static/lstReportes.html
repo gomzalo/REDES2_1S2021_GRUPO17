@@ -55,8 +55,10 @@
 								$('#userTable').hide();
 							}else{
 								$('#userTable').show();
+								
+								$('#footmsj').html(myJsonString[0].Cuerpo);
 								var tabla;
-								for(var i = 0; i < myJsonString.length; i++){
+								for(var i = 1; i < myJsonString.length; i++){
 									// console.log(res[i]);
 									tabla+=  '<tr><td>' + myJsonString[i].Carnet + '</td><td>' + myJsonString[i].Nombre + '</td><td>' + myJsonString[i].Curso + '</td><td>'+ myJsonString[i].Fecha + '</td><td>' + myJsonString[i].Cuerpo + '</td><tr>' ;
 								}
@@ -168,6 +170,9 @@
 			<button type="button" id="btnRegresar" name="btnRegresar" class="btn btn-secondary btn-lg">Regresar</button>
 		</center>
 	</form>
-
+	<footer>
+		<p id="footmsj"><br>
+		<!-- <a href="mailto:hege@example.com">hege@example.com</a></p> -->
+	  </footer>
 </body>
 </html>

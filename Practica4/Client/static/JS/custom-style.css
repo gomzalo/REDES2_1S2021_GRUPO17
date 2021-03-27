@@ -1,0 +1,97 @@
+.custom-button{
+    color: #fff;
+    background-color: #056AB8;
+    margin: 10px auto;
+    padding: 5px 10px;
+    font-weight: bold;
+    width: 150px;
+    border: none;
+    cursor: pointer;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.input-item{
+    width: 200px;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.table-form{
+    margin: 20px 0 0 0;
+    BORDER-COLLAPSE: collapse;
+} 
+
+.table-border{
+    border: 1px solid #d0d0d0;
+} 
+
+tr .columnatipoizq{
+    
+}
+tr .columnatipoder{
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.input,
+.table-form tr td select{
+    width: 200px;
+}
+
+.table-form tr th{
+    border-bottom: solid 4px #04406F;
+    padding: 5px;
+}
+
+tr .columnatipoizq{
+    padding: 5px;
+}
+
+.list-element{
+    background-color: #e6e6e6;
+    border: none;
+}
+
+.list-element2{
+    background-color: #f6f6f6;
+    border: none;
+}
+
+.list-element td,
+.list-element2 td{
+    padding: 5px;
+}
+
+.list-column{
+    padding: 5px;
+}
+
+.ACTIVO{
+    color: #0000ff;
+}
+
+.INACTIVO{
+    color: red;
+}
+
+.item-page-hide{
+    display: none;
+}
+
+.mensajeExito{
+    color: #0000ff;
+    font-weight: bold;
+    text-align: center;
+}
+
+.img_icono{
+    width: 15px; 
+    height: 15px;
+    border:none;
+    cursor: pointer;
+}

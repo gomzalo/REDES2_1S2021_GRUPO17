@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Practica_4 Inicio</title>
+	<script src="JS/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="JS/bootstrap.css">
+</head>
+<body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			$('#btnCarga').click(function(){
+				window.location.href = "CargarReporte.html";
+				return false;
+			});
+
+			$('#btnLstRep').click(function(){
+				window.location.href = "lstReportes.html";
+			});
+
+			$('#btnRep').click(function(){
+				window.location.href = "vistaReporte.html";
+			});
+
+		});
+	</script>
+	<form id="archivos" name="archivos">
+		<br>
+		<h1 align="center">Practica 4</h1>
+		<h2 align="center">Grupo 17</h2>
+		<br>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h2 align="center">Integrantes</h2>
+					<table id="userTable" class="table-striped table-bordered" style="width: 100%">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Carnet</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Gonzalo Garcia</th>
+								<td>201318652</th>
+							</tr>
+							<tr>
+								<td>Juan Pablo Montúfar</th>
+								<td>200413657</th>
+							</tr>
+							<tr>
+								<td>Eduardo Ajsivinac</th>
+								<td>201503584</th>
+							</tr>
+							<tr>
+								<td>Johnny Bravo</th>
+								<td>200517803</th>
+							</tr>
+						</tbody>
+						
+					</table>
+				</div>
+			</div>		
+		</div>
+		<br>
+		<center>
+			<button type="button" id="btnCarga" name="btnCarga" class="btn btn-secondary btn-lg">Cargar Reporte</button>
+			<button type="button" id="btnLstRep" name="btnLstRep" class="btn btn-secondary btn-lg">Ver Reportes</button>
+			<button type="button" id="btnRep" name="btnRep" class="btn btn-secondary btn-lg">Reporte individual</button>
+		</center>
+	</form>
+
+</body>
+</html>

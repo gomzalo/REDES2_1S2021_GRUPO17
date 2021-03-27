@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Carga de reportes</title>
+	<script src="JS/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="JS/bootstrap.css">
+	<style type="text/css">
+		table.dataTable thead{
+			background: linear-gradient(to right,#4A00E0, #8E2DE2);
+			color: white;
+		}
+	</style>
+
+</head>
+<body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			//$('#userTable').hide();
+
+			$('#lstReporte').on("submit",function(e){
+
+				e.preventDefault();
+				var carnet = $('#txtCarnet').val();
+				var url1 = "";
+				var myJsonString;
+				var mensaje;
+				var nombre_servidor;
+				if (carnet == ""){
+					url1 = 'http://localhost:4000/dato';
+				} else {
+					url1 = 'http://localhost:4000/buscar/' + carnet;
+				}
+				
+				if(validar(carnet)){
+					console.log("Resp");
+					$.ajax({
+						
+						//url: 'https://reqres.in/api/users?page='+ 0,
+						url: url1,
+						type: 'GET',
+						success: function(res){
+							if (carnet == ""){
+								myJsonString = JSON.parse(res);
+							} else {
+								myJsonString = res;
+							}
+							$("#userTable > tbody").empty();
+							// var myJsonString = JSON.stringify('{"data": ' + res + '}');
+							console.log("success");
+							console.log(res);
+							
+							console.log("JSON: ", myJsonString);
+							// console.log("JSON: ", myJsonString);
+							if(myJsonString.length == 0){
+								alert("No existen datos para mostrar");
+								$('#userTable').hide();
+							}else{
+								$('#userTable').show();
+								nombre_servidor = myJsonString[0].Nombre;
+								$('#footmsj').html(mensaje);
+								var tabla;
+								for(var i = 1; i < myJsonString.length; i++){
+									// console.log(res[i]);
+									tabla+=  '<tr><td>' + myJsonString[i].Carnet + '</td><td>' + myJsonString[i].Nombre + '</td><td>' + myJsonString[i].Curso + '</td><td>'+ myJsonString[i].Fecha + '</td><td>' + myJsonString[i].Cuerpo + '</td><tr>' ;
+								}
+								$('#tbody').html(tabla);
+							}	
+						}
+					});
+
+					var table = document.getElementsByTagName('table')[0];
+					var tbody = table.getElementsByTagName('tbody')[0];
+					tbody.onclick = function (e) {
+						e = e || window.event;
+						var data = [];
+						var target = e.srcElement || e.target;
+						while (target && target.nodeName !== "TR") {
+							target = target.parentNode;
+						}
+						if (target) {
+							var cells = target.getElementsByTagName("td");
+							for (var i = 0; i < cells.length; i++) {
+								data.push(cells[i].innerHTML);
+							}
+						}
+						data.push(nombre_servidor);
+						alert(data);
+						localStorage.setItem("reporte", data);
+						location="vistaReporte.html";
+					};
+					// ------------------
+						/*$.get("https://reqres.in/api/users", {page: 2}, function(respuesta){
+							respuesta.data.forEach((element, index) => {
+								$('#lstRep').append("<tr>" + element.first_name + " " + element.last_name+ "</tr>" );
+							});
+						});*/
+
+
+						/*var settings = {
+							"url": "http://localhost:4000/dato",
+							"method": "GET",
+							"timeout": 0,
+						};
+
+						$.ajax(settings).done(function (response) {
+							console.log(response);
+							var myTextArea = document.getElementById('textareaResult');
+							myTextArea.innerHTML = response;
+							
+						});*/
+
+					limpiar();
+				}
+			});
+
+			function validar(carnet){
+
+				// if(carnet == ""){
+				// 	alert("No se ingreso carnet, se muestran todos los registro.");
+				// 	$('#txtCarnet').focus();
+				// 	return true; 
+				// }
+
+				return true;
+			}
+
+			function limpiar(){
+				$('#txtCarnet').val('');
+			}
+
+			$('#txtCarnet').on('input', function () { 
+			    this.value = this.value.replace(/[^0-9]/g,'');
+			});
+
+			$('#btnRegresar').click(function(){
+					window.location.href = "index.html";
+					return false;
+			});
+
+		});
+	</script>
+	<form id="lstReporte" name="lstReporte">
+		<br>
+		<h1 align="center">Listado de Reportes</h1>
+		<!-- <br align="center"> -->
+		<div align="center">
+			
+
+			<tr id="divCarnet" name="divCarnet">
+				<td>Carnet</td>
+				<td>
+					<input  id="txtCarnet" name="txtCarnet" style="width: 423px" placeholder="Ingresa un carnet">
+				</td>
+				<td>
+					<button type="submit" id="btnEnviar" name="btnEnviar" class="btn btn-secondary btn-lg">Buscar</button>
+				</td>
+			</tr>
+
+		</div>
+		<br>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<table id="userTable" class="table-striped table-bordered" style="width: 100%">
+						<thead>
+							<tr>
+								<th>Carnet</th>
+								<th>Nombre</th>
+								<th>Curso</th>
+								<th>Fecha</th>
+								<th>Cuerpo</th>
+							</tr>
+						</thead>
+						<tbody id="tbody">
+							
+						</tbody>
+						
+					</table>
+				</div>
+			</div>		
+		</div>
+		<br>
+		<!--
+		<table align="center">
+			
+		</table>
+	-->
+
+		<center>
+			<button type="button" id="btnRegresar" name="btnRegresar" class="btn btn-secondary btn-lg">Regresar</button>
+		</center>
+	</form>
+	<footer>
+		<p id="footmsj"><br>
+		<!-- <a href="mailto:hege@example.com">hege@example.com</a></p> -->
+	  </footer>
+</body>
+</html>

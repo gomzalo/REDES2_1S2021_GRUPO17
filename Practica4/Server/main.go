@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +30,18 @@ type Reporte struct {
 	Cuerpo string `json:"Cuerpo"`
 }
 
-var reportes []Reporte
+type CarnetE struct {
+	Carnet int `json:"Carnet"`
+}
+
+var carnets []CarnetE
+
+// var reportes []Reporte
+
+type reporteJSON struct {
+	reportes []Reporte
+	string   `json:"data"`
+}
 
 var nombre_servidor = "default"
 var mensaje = "Mensaje default"
@@ -53,56 +65,241 @@ func MensajeHandler(w http.ResponseWriter, request *http.Request) {
 func DatosHandler(w http.ResponseWriter, request *http.Request) {
 	enableCors(&w)
 	log.Println("DatosHandler")
-	results, err := db_handler.Query("SELECT Carnet, Nombre FROM Reporte")
-	// results, err := db_handler.Query("SELECT EmployeeId, FirstName FROM EMPLOYEE")
+
+	results, err := db_handler.Query("SELECT Carnet, Nombre, Curso, Cuerpo FROM Reporte")
+
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	registros := ""
+	var reportes []Reporte
+	var msj Reporte
+	msj.Cuerpo = mensaje
+	msj.Nombre = nombre_servidor
+	reportes = append(reportes, msj)
+
 	log.Println("Resultados: ", results)
 	for results.Next() {
-		// var emp ESTUDIANTE
-		// // for each row, scan the result into ESTUDIANTE object
-		// err = results.Scan(&emp.Id, &emp.Name)
-		// if err != nil {
-		// 	panic(err.Error()) // proper error handling instead of panic in your app
-		// }
-		// registros = registros + strconv.Itoa(emp.Id) + " - " + emp.Name + "\n"
 		var emp Reporte
-		// for each row, scan the result into Reporte object
-		err = results.Scan(&emp.Carnet, &emp.Nombre)
+		err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Cuerpo)
 		if err != nil {
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
-		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + "\n"
+		// registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Fecha + " - " + emp.Cuerpo + "\n"
+		reportes = append(reportes, emp)
+		json.NewEncoder(log.Writer()).Encode(emp)
+		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Cuerpo + "\n"
 	}
-	registros = registros + mensaje
 
-	log.Println("Registros: ", registros)
-	w.Write([]byte(registros))
+	// json.NewEncoder(log.Writer()).Encode(reportes)
+	json.NewEncoder(w).Encode(reportes)
+	// registros = registros + mensaje
+
+	log.Println("Registros: ", reportes)
+	// w.Write([]byte("[{ \"mensaje\": \"" + mensaje + "\"}]"))
 }
 
 // ::::::::::::::::::: 	ENDPOINTS PRACTICA	 :::::::::::::::::::
 func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
-	w.Header().Set("Content-Type", "appliction/json")
-	var r Reporte
-	json.NewDecoder(request.Body).Decode(&r)
-	r.Carnet = len(reportes) + 1
-	reportes = append(reportes, r)
-	json.NewEncoder(w).Encode(r)
 	enableCors(&w)
-	log.Println("DatosHandler")
-	query := "INSERT INTO Reporte (Carnet, Nombre, Curso, Cuerpo) VALUES (?, ?, ?, ?, ?);"
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	// (w).Header().Set("Access-Control-Allow-Origin", "*")
+	// (w).Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	// (w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	w.Header().Set("Content-Type", "appliction/json")
+	// var reportes []Reporte
+	carnet_, ok := request.URL.Query()["Carnet"]
+	curso_, ok := request.URL.Query()["Curso"]
+	nombre_, ok := request.URL.Query()["Nombre"]
+	cuerpo_, ok := request.URL.Query()["Cuerpo"]
+	fecha_, ok := request.URL.Query()["Fecha"]
+	if !ok || len(carnet_[0]) < 1 {
+		log.Println("Url Param 'Carnet' is missing")
+		return
+	}
+	Carnet := carnet_[0]
+	Curso := curso_[0]
+	Nombre := nombre_[0]
+	Cuerpo := cuerpo_[0]
+	Fecha := fecha_[0]
+	log.Println("Carnet: ", Carnet)
+	log.Println("Curso: ", Curso)
+	log.Println("Nombre: ", Nombre)
+	log.Println("Cuerpo: ", Cuerpo)
+	log.Println("Fecha: ", Fecha)
+	// var nuevoReporte Reporte
+	// json.NewDecoder(request.Body).Decode(&nuevoReporte)
+	// // nuevoReporte.Carnet = (len(reportes) + 1)
+	// reportes = append(reportes, nuevoReporte)
+	// json.NewEncoder(w).Encode(nuevoReporte)
+	// // Obteniendo datos de reporte
+	// log.Println("Reportes: ", reportes)
+	// Ingresando a BD
+
+	// ******************************************
+	// query := "INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?);"
+	// ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancelfunc()
+	// stmt, err := db_handler.PrepareContext(ctx, query)
+	// if err != nil {
+	// 	log.Printf("Error %s when preparing SQL statement", err)
+	// 	// return err
+	// }
+	// defer stmt.Close()
+	// // current_time := time.Now().Local()
+	// // current_time = current_time.Format("01-02-2006 15:04:05")
+	// // nuevoReporte.Fecha = current_time.String()
+	// res, err := stmt.ExecContext(ctx, Carnet, Nombre, Curso, Fecha, Cuerpo)
+	// if err != nil {
+	// 	log.Printf("Error %s when inserting row into products table", err)
+	// 	// return err
+	// }
+	// rows, err := res.RowsAffected()
+	// if err != nil {
+	// 	log.Printf("Error %s when finding rows affected", err)
+	// 	// return err
+	// }
+	// log.Printf("%d Reporte creado ", rows)
+	// prdID, err := res.LastInsertId()
+	// if err != nil {
+	// 	log.Printf("Error %s when getting last inserted product", err)
+	// 	// return err
+	// }
+	// log.Printf("Reporte del carnte %d creado", prdID)
+	// // return nil
+	// ******************************************
+	results, err := db_handler.Query("INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?);", Carnet, Nombre, Curso, Fecha, Cuerpo)
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	registros := ""
+	var reportes []Reporte
+	var msj Reporte
+	msj.Cuerpo = mensaje
+	msj.Nombre = nombre_servidor
+	reportes = append(reportes, msj)
+	defer results.Close()
+	log.Println("Resultados: ", results)
+	for results.Next() {
+		var emp Reporte
+		err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Fecha, &emp.Cuerpo)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+		// registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Fecha + " - " + emp.Cuerpo + "\n"
+		reportes = append(reportes, emp)
+		json.NewEncoder(log.Writer()).Encode(emp)
+		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Cuerpo + "\n"
+	}
+
+	// json.NewEncoder(log.Writer()).Encode(reportes)
+	json.NewEncoder(w).Encode(reportes)
+	registros = registros + mensaje
+
+	log.Println("Registros: ", reportes)
+
+	// w.WriteHeader(http.StatusCreated)
+	// w.Write([]byte(`{"message": "Reporte ingresado"}`))
+}
+
+func BuscarReporteHandler(w http.ResponseWriter, request *http.Request) {
+	////////////////////////////////////////////////////////////////////////////
+	// enableCors(&w)
+	// w.Header().Set("Content-Type", "appliction/json")
+	// // var nuevoCarnet CarnetE
+	// // json.NewDecoder(request.Body).Decode(&nuevoCarnet)
+	// // // nuevoReporte.Carnet = (len(reportes) + 1)
+	// // carnets = append(carnets, nuevoCarnet)
+	// // json.NewEncoder(w).Encode(nuevoCarnet)
+	// // // Obteniendo datos de reporte
+	// // log.Println("Carnets: ", carnets)
+	// params := mux.Vars(request)
+	// carnet := params["carnet"]
+	// fmt.Println(carnet)
+	// var nuevoReporte Reporte
+	// query := "SELECT * FROM Reporte WHERE Carnet = ?;"
+	// row, err := db_handler.Query(query, carnet)
+	// // *****************
+	// if err != nil {
+	// 	// panic(err.Error()) // proper error handling instead of panic in your app
+	// 	log.Fatal(err)
+	// }
+	// defer row.Close()
+	// for row.Next() {
+	// 	row.Scan(&nuevoReporte.Carnet, &nuevoReporte.Nombre, &nuevoReporte.Curso, &nuevoReporte.Fecha, &nuevoReporte.Cuerpo)
+	// 	json.NewEncoder(w).Encode(nuevoReporte)
+	// }
+	// w.WriteHeader(http.StatusCreated)
+	// // nombre_servidor = os.Getenv("ID_SERVIDOR")
+	// mensaje = "Solicitud atendida por el servidor: " + nombre_servidor
+	// w.Write([]byte(`{"message":` + `"` + mensaje + `"}`))
+	////////////////////////////////////////////////////////////////////////////
+	enableCors(&w)
+	w.Header().Set("Content-Type", "appliction/json")
+	// log.Println("DatosHandler")
+	params := mux.Vars(request)
+	carnet := params["carnet"]
+	fmt.Println("Carnet a buscar: ", carnet)
+
+	results, err := db_handler.Query("SELECT * FROM Reporte WHERE Carnet = ?;", carnet)
+
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+	registros := ""
+	var reportes []Reporte
+	var msj Reporte
+	msj.Cuerpo = mensaje
+	msj.Nombre = nombre_servidor
+	reportes = append(reportes, msj)
+	defer results.Close()
+	log.Println("Resultados: ", results)
+	for results.Next() {
+		var emp Reporte
+		err = results.Scan(&emp.Carnet, &emp.Nombre, &emp.Curso, &emp.Fecha, &emp.Cuerpo)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+		// registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Fecha + " - " + emp.Cuerpo + "\n"
+		reportes = append(reportes, emp)
+		json.NewEncoder(log.Writer()).Encode(emp)
+		registros = registros + strconv.Itoa(emp.Carnet) + " - " + emp.Nombre + " - " + emp.Curso + " - " + emp.Cuerpo + "\n"
+	}
+
+	// json.NewEncoder(log.Writer()).Encode(reportes)
+	json.NewEncoder(w).Encode(reportes)
+	registros = registros + mensaje
+
+	log.Println("Registros: ", reportes)
+	// w.Write([]byte(registros))
+}
+
+func MostrarReporteHandler(w http.ResponseWriter, request *http.Request) {
+	enableCors(&w)
+	w.Header().Set("Content-Type", "appliction/json")
+	var nuevoReporte Reporte
+	json.NewDecoder(request.Body).Decode(&nuevoReporte)
+	// nuevoReporte.Carnet = (len(reportes) + 1)
+	var reportes []Reporte
+	reportes = append(reportes, nuevoReporte)
+	json.NewEncoder(w).Encode(nuevoReporte)
+	// Obteniendo datos de reporte
+	log.Println("Reportes: ", reportes)
+
+	// Ingresando a BD
+
+	query := "INSERT INTO Reporte(Carnet, Nombre, Curso, Fecha, Cuerpo) VALUES (?, ?, ?, ?, ?)"
+
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
-	// results, err := db_handler.ExecContext("SELECT Carnet, Nombre FROM Reporte")
 	stmt, err := db_handler.PrepareContext(ctx, query)
 	if err != nil {
 		log.Printf("Error %s when preparing SQL statement", err)
 		// return err
 	}
 	defer stmt.Close()
-	res, err := stmt.ExecContext(ctx, r.Carnet, r.Nombre, r.Curso, r.Fecha, r.Cuerpo)
+	res, err := stmt.ExecContext(ctx, nuevoReporte.Carnet, nuevoReporte.Nombre, nuevoReporte.Curso, nuevoReporte.Fecha, nuevoReporte.Cuerpo)
 	if err != nil {
 		log.Printf("Error %s when inserting row into products table", err)
 		// return err
@@ -120,18 +317,24 @@ func CrearReporteHandler(w http.ResponseWriter, request *http.Request) {
 	}
 	log.Printf("Product with ID %d created", prdID)
 	// return nil
-	w.Write([]byte("registros"))
+
+	// *****************
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"message": "post called"}`))
 }
+
 func main() {
 	router := mux.NewRouter()
 	// Endpoints
 	router.HandleFunc("/siu", PruebaHandler).Methods("GET")
 	router.HandleFunc("/mensaje", MensajeHandler).Methods("GET")
 	router.HandleFunc("/dato", DatosHandler).Methods("GET")
-	router.HandleFunc("/crear_reporte", CrearReporteHandler).Methods("POST")
+	router.HandleFunc("/crear", CrearReporteHandler).Methods("GET")
+	router.HandleFunc("/buscar/{carnet}", BuscarReporteHandler).Methods("GET")
+	router.HandleFunc("/mostrar", MostrarReporteHandler).Methods("GET")
 	// BD
 	nombre_servidor = os.Getenv("ID_SERVIDOR")
-	mensaje = "Hola! te saluda el servidor " + nombre_servidor
+	mensaje = "Procesado por el servidor " + nombre_servidor
 	log.Println("Estoy escuchando en el puerto 5000")
 
 	//Se utilizan variables de entorno para poder modificar valores desde el archivo docker-compose, y
@@ -141,16 +344,7 @@ func main() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 	db_name := os.Getenv("DB_NAME")
-	// database, err := db.Initialize(usuario, pass, db_name)
 
-	// if err != nil {
-	// 	log.Fatalf("No se pudo conectar a la BD: %v", err)
-	// 	panic(err.Error())
-	// } else {
-	// 	db_handler = database.Conn
-	// 	log.Println("aaaaaa")
-	// }
-	// defer database.Conn.Close()
 	conn_string := usuario + ":" + pass + "@tcp(" + host + ":" + port + ")/" + db_name
 	db, err := sql.Open("mysql", conn_string)
 
@@ -172,4 +366,6 @@ func main() {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }

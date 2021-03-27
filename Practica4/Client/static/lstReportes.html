@@ -22,23 +22,43 @@
 
 				e.preventDefault();
 				var carnet = $('#txtCarnet').val();
-
+				var url1 = "";
+				var myJsonString;
+				if (carnet == ""){
+					url1 = 'http://localhost:4000/dato';
+				} else {
+					url1 = 'http://localhost:4000/buscar/' + carnet;
+				}
+				
 				if(validar(carnet)){
-
+					console.log("Resp");
 					$.ajax({
+						
 						//url: 'https://reqres.in/api/users?page='+ 0,
-						url: 'localhost:4000/dato',
+						url: url1,
 						type: 'GET',
 						success: function(res){
-							if(res.data.length == 0){
+							if (carnet == ""){
+								myJsonString = JSON.parse(res);
+							} else {
+								myJsonString = res;
+							}
+							$("#userTable > tbody").empty();
+							// var myJsonString = JSON.stringify('{"data": ' + res + '}');
+							console.log("success");
+							console.log(res);
+							
+							console.log("JSON: ", myJsonString);
+							// console.log("JSON: ", myJsonString);
+							if(myJsonString.length == 0){
 								alert("No existen datos para mostrar");
 								$('#userTable').hide();
 							}else{
 								$('#userTable').show();
 								var tabla;
-								for(var i = 0; i < res.data.length; i++){
-									console.log(res.data[i]);
-									tabla+=  '<tr><td>' + res.dato[i].Carnet + '</td><td>' + res.dato[i].Nombre + '</td><td>' + res.dato[i].Curso + '</td><td>'+ res.dato[i].Fecha + '</td><td>' + res.dato[i].Cuerpo + '</td><tr>' ;
+								for(var i = 0; i < myJsonString.length; i++){
+									// console.log(res[i]);
+									tabla+=  '<tr><td>' + myJsonString[i].Carnet + '</td><td>' + myJsonString[i].Nombre + '</td><td>' + myJsonString[i].Curso + '</td><td>'+ myJsonString[i].Fecha + '</td><td>' + myJsonString[i].Cuerpo + '</td><tr>' ;
 								}
 								$('#tbody').html(tabla);
 							}
@@ -72,11 +92,11 @@
 
 			function validar(carnet){
 
-				/*if(carnet == ""){
-					alert("Ingrese un carnet.");
-					$('#txtCarnet').focus();
-					return false; 
-				}*/
+				// if(carnet == ""){
+				// 	alert("No se ingreso carnet, se muestran todos los registro.");
+				// 	$('#txtCarnet').focus();
+				// 	return true; 
+				// }
 
 				return true;
 			}

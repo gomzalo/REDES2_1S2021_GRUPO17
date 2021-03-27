@@ -105,11 +105,20 @@ networks:
   #se crea la red "red-servidores" usando el driver de tipo "bridge"
   red-servidores:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.35.76.0/24
 
   red-db:
       driver: bridge
-  
+      ipam:
+        config:
+          - subnet: 10.10.16.0/24
+        
   red-client:
       driver: bridge
+      ipam:
+        config:
+          - subnet: 192.168.56.0/24
 volumes:
   my-datavolume:

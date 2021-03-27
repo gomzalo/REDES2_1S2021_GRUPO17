@@ -57,6 +57,7 @@
 								$('#userTable').hide();
 							}else{
 								$('#userTable').show();
+								mensaje = myJsonString[0].Cuerpo;
 								nombre_servidor = myJsonString[0].Nombre;
 								$('#footmsj').html(mensaje);
 								var tabla;

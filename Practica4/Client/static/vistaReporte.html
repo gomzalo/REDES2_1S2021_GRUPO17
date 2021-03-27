@@ -9,21 +9,31 @@
 <body>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			var reporte = localStorage.getItem("reporte");
+				reporte_actual = reporte.split(",");
+				// alert();
+				$('#txtCarnet').val(reporte_actual[0]);
+				$('#txtNombre').val(reporte_actual[1]);
+				$('#txtCursoProyecto').val(reporte_actual[2]);
+				$('#txtCuerpo').val(reporte_actual[4]);
+				$('#txtProcesado').val(reporte_actual[5]);
+				
+			// $('#archivos').on("submit",function(e){
 
-			$('#archivos').on("submit",function(e){
+			// 	// e.preventDefault();
+			// 	$('#txtCarnet').val();
+			// 	$('#txtNombre').val();
+			// 	$('#txtCursoProyecto').val();
+			// 	$('#txtCuerpo').val();
 
-				e.preventDefault();
-				var carnet = $('#txtCarnet').val();
-				var nombre = $('#txtNombre').val();
-				var curso_proyecto = $('#txtCursoProyecto').val();
-				var cuerpo = $('#txtCuerpo').val();
+			// 	if(validar(carnet, nombre, curso_proyecto, cuerpo)){
+			// 		console.log("Resp");
+			// 		// alert("campos validados");
+			// 		// limpiar();
+					
+			// 	}
 
-				if(validar(carnet, nombre, curso_proyecto, cuerpo)){
-					alert("campos validados");
-					limpiar();
-				}
-
-			});
+			// });
 
 			function validar(carnet, nombre, curso_proyecto, cuerpo){
 
@@ -96,6 +106,9 @@
 			
 		</table>
 	</form>
-
+	<footer>
+		<p id="footmsj"><br>
+		<!-- <a href="mailto:hege@example.com">hege@example.com</a></p> -->
+	  </footer>
 </body>
 </html>

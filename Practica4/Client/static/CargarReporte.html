@@ -31,22 +31,34 @@
 
 				if(validar(carnet, nombre, curso_proyecto, cuerpo)){
 					//alert("campos validados");
-					var settings = {
-						"url": "http://localhost:4000/crear?Carnet=" + carnet + "&Nombre=" + nombre + "&Curso=" + curso_proyecto + "&Fecha=" + "26032021" + "&Cuerpo=" + cuerpo,
-						"method": "GET",
-						"timeout": 0,
-						"headers": {
-							"Access-Control-Allow-Headers": "Authorization",
-							"Content-Type": "application/json"
-						},
-						// "data": JSON.stringify({"Carnet":2000000,"Nombre":"Dianita3","Curso":"Analisis3","Fecha":"26/03/2021","Cuerpo":"kjfklasdmflk"}),
-					};
-					console.log(settings.data);
-					$.ajax(settings).done(function (response) {
-						alert(response);
-						location.reload(); 
-					});
+					// var settings = {
+					// 	"url": "http://localhost:4000/crear?Carnet=" + carnet + "&Nombre=" + nombre + "&Curso=" + curso_proyecto + "&Fecha=" + "26032021" + "&Cuerpo=" + cuerpo,
+					// 	"method": "GET",
+					// 	"timeout": 0,
+					// 	"headers": {
+					// 		"Access-Control-Allow-Headers": "Authorization",
+					// 		"Content-Type": "application/json"
+					// 	},
+					// 	// "data": JSON.stringify({"Carnet":2000000,"Nombre":"Dianita3","Curso":"Analisis3","Fecha":"26/03/2021","Cuerpo":"kjfklasdmflk"}),
+					// };
+					// console.log(settings.data);
+					// $.ajax(settings).done(function (response) {
+					// 	alert(response);
+					// 	location.reload(); 
+					// });
 					//limpiar();
+					console.log("Resp");
+					$.ajax({
+						
+						//url: 'https://reqres.in/api/users?page='+ 0,
+						url: "http://localhost:4000/crear?Carnet=" + carnet + "&Nombre=" + nombre + "&Curso=" + curso_proyecto + "&Fecha=" + "27032021" + "&Cuerpo=" + cuerpo,
+					// 	"method": "GET",,
+						type: 'GET',
+						success: function(res){
+							alert("Reporte creado correctamente.");
+							console.log(res);
+						}
+					});
 				}
 
 			});
@@ -140,6 +152,9 @@
 			
 		</table>
 	</form>
-
+	<footer>
+		<p id="footmsj"><br>
+		<!-- <a href="mailto:hege@example.com">hege@example.com</a></p> -->
+	  </footer>
 </body>
 </html>

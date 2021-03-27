@@ -24,6 +24,8 @@
 				var carnet = $('#txtCarnet').val();
 				var url1 = "";
 				var myJsonString;
+				var mensaje;
+				var nombre_servidor;
 				if (carnet == ""){
 					url1 = 'http://localhost:4000/dato';
 				} else {
@@ -55,38 +57,58 @@
 								$('#userTable').hide();
 							}else{
 								$('#userTable').show();
-								
-								$('#footmsj').html(myJsonString[0].Cuerpo);
+								nombre_servidor = myJsonString[0].Nombre;
+								$('#footmsj').html(mensaje);
 								var tabla;
 								for(var i = 1; i < myJsonString.length; i++){
 									// console.log(res[i]);
 									tabla+=  '<tr><td>' + myJsonString[i].Carnet + '</td><td>' + myJsonString[i].Nombre + '</td><td>' + myJsonString[i].Curso + '</td><td>'+ myJsonString[i].Fecha + '</td><td>' + myJsonString[i].Cuerpo + '</td><tr>' ;
 								}
 								$('#tbody').html(tabla);
-							}
-							
+							}	
 						}
 					});
 
-					/*$.get("https://reqres.in/api/users", {page: 2}, function(respuesta){
-						respuesta.data.forEach((element, index) => {
-							$('#lstRep').append("<tr>" + element.first_name + " " + element.last_name+ "</tr>" );
-						});
-					});*/
-
-
-					/*var settings = {
-						"url": "http://localhost:4000/dato",
-						"method": "GET",
-						"timeout": 0,
+					var table = document.getElementsByTagName('table')[0];
+					var tbody = table.getElementsByTagName('tbody')[0];
+					tbody.onclick = function (e) {
+						e = e || window.event;
+						var data = [];
+						var target = e.srcElement || e.target;
+						while (target && target.nodeName !== "TR") {
+							target = target.parentNode;
+						}
+						if (target) {
+							var cells = target.getElementsByTagName("td");
+							for (var i = 0; i < cells.length; i++) {
+								data.push(cells[i].innerHTML);
+							}
+						}
+						data.push(nombre_servidor);
+						alert(data);
+						localStorage.setItem("reporte", data);
+						location="vistaReporte.html";
 					};
+					// ------------------
+						/*$.get("https://reqres.in/api/users", {page: 2}, function(respuesta){
+							respuesta.data.forEach((element, index) => {
+								$('#lstRep').append("<tr>" + element.first_name + " " + element.last_name+ "</tr>" );
+							});
+						});*/
 
-					$.ajax(settings).done(function (response) {
-						console.log(response);
-						var myTextArea = document.getElementById('textareaResult');
-						myTextArea.innerHTML = response;
-						
-					});*/
+
+						/*var settings = {
+							"url": "http://localhost:4000/dato",
+							"method": "GET",
+							"timeout": 0,
+						};
+
+						$.ajax(settings).done(function (response) {
+							console.log(response);
+							var myTextArea = document.getElementById('textareaResult');
+							myTextArea.innerHTML = response;
+							
+						});*/
 
 					limpiar();
 				}
@@ -121,8 +143,8 @@
 	<form id="lstReporte" name="lstReporte">
 		<br>
 		<h1 align="center">Listado de Reportes</h1>
-		<br>
-		<table align="center">
+		<!-- <br align="center"> -->
+		<div align="center">
 			
 
 			<tr id="divCarnet" name="divCarnet">
@@ -135,7 +157,7 @@
 				</td>
 			</tr>
 
-		</table>
+		</div>
 		<br>
 
 		<div class="container">

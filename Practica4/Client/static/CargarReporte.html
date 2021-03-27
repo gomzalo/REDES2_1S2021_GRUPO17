@@ -9,7 +9,8 @@
 <body>
 	<script type="text/javascript">
 		var d = new Date();
-
+		var mensaje;
+		var nombre_servidor;
 		var month = d.getMonth()+1;
 		var day = d.getDate();
 
@@ -97,7 +98,9 @@
 				$('#txtCursoProyecto').val('');
 				$('#txtCuerpo').val('');
 			}
-
+			// mensaje = myJsonString[0].Cuerpo;
+			// nombre_servidor = myJsonString[0].Nombre;
+			// $('#footmsj').html(mensaje);
 			//restringe la entrada solo a numeros
 			$('#txtCarnet').on('input', function () { 
 			    this.value = this.value.replace(/[^0-9]/g,'');

@@ -78,6 +78,24 @@ services:
     networks:
       - red-servidores
       - red-db
+  server4:
+    # image: gomzalo/r2-server-p4:latest
+    build: ./Server
+    ports:
+     - "5004:6003"
+    #se conecta el contenedor a la red "red-servidores"
+    depends_on:
+     - db
+    environment:
+    - USER_NAME=users_service
+    - PORT=3306
+    - HOST=db
+    - DB_NAME=test
+    - PASS=123
+    - ID_SERVIDOR=202100000
+    networks:
+      - red-servidores
+      - red-db
 
   nginx:
     image: nginx:latest

@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  server:
+    build: ./server
+    ports:
+      - "6000:6000"
+    networks:
+      - GRPC
+
+  client:
+    build: ./client
+    ports:
+      - "5000:5000"
+    depends_on:
+      - server
+    restart: always
+    networks:
+      - GRPC
+
+networks:
+  GRPC:
+    driver: "bridge"

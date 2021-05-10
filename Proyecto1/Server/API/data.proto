@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package data;
+
+option go_package="/datapb";
+
+message Data {
+    string name = 1;
+    string location = 2;
+    int32 age = 3;
+    string infectedtype = 4;
+    string state = 5;
+    string ruta = 6;
+}
+
+message Response {
+    string description = 1;
+}
+
+service DataService {
+    rpc Save(Data) returns (Response) {};
+}
+
+//protoc data.proto --go_out=plugins=grpc:.

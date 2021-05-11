@@ -4,13 +4,21 @@ package data;
 
 option go_package="/datapb";
 
-message Data {
-    string name = 1;
-    string location = 2;
-    int32 age = 3;
-    string infectedtype = 4;
-    string state = 5;
-    string ruta = 6;
+message Reporte {
+    int32 Carnet = 1;
+    string Nombre = 2;
+    string Curso = 3;
+    string Fecha = 4;
+    string Cuerpo = 5;
+}
+
+message Asistencia {
+    int32 Carnet = 1;
+    string Nombre = 2;
+    string NombreEvento = 3;
+    int32 IdEvento = 4;
+    string Imagen = 5;
+    string Fecha = 6;
 }
 
 message Response {
@@ -18,7 +26,8 @@ message Response {
 }
 
 service DataService {
-    rpc Save(Data) returns (Response) {};
+    rpc SaveReporte(Reporte) returns (Response) {};
+    rpc SaveAsistencia(Asistencia) returns (Response) {};
 }
 
 //protoc data.proto --go_out=plugins=grpc:.

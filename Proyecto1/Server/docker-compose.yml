@@ -1,13 +1,29 @@
 version: "3.9"
 services:
+  client:
+    build: 
+      context: API
+      dockerfile: ./Dockerfile
+    ports:
+      - "6000:6000"
+    depends_on: 
+      - db
+      - server
+    networks:
+      - server_backend
+
   server:
     build: 
       context: Backend
       dockerfile: ./Dockerfile
     ports:
-      - "6000:6000"
+      - "5000:5000"
+      - "3000:3000"
+    depends_on: 
+      - db
     networks:
       - server_backend
+    
 
   db:
     container_name: db

@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  server:
+    build: 
+      context: Backend
+      dockerfile: ./Dockerfile
+    ports:
+      - "6000:6000"
+    networks:
+      - server_backend
+
+  db:
+    container_name: db
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db/db:/data/db
+    networks: 
+      - server_backend
+
+networks:
+  server_backend:
+    driver: "bridge"
+    external: false
+    name: server_backend

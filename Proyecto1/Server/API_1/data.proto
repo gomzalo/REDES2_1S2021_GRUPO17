@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package data;
+
+option go_package="/datapb";
+
+message Reporte {
+    int32 Carnet = 1;
+    string Nombre = 2;
+    string Curso = 3;
+    string Fecha = 4;
+    string Cuerpo = 5;
+}
+
+message Asistencia {
+    int32 Carnet = 1;
+    string Nombre = 2;
+    string NombreEvento = 3;
+    int32 IdEvento = 4;
+    string Imagen = 5;
+    string Fecha = 6;
+}
+
+message Response {
+    string description = 1;
+}
+
+service DataService {
+    rpc SaveReporte(Reporte) returns (Response) {};
+    rpc SaveAsistencia(Asistencia) returns (Response) {};
+}
+
+//protoc data.proto --go_out=plugins=grpc:.

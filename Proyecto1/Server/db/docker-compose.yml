@@ -1,12 +1,14 @@
 version: "3.9"
 
 services:
-  client:
-    build:
-      dockerfile: ./Dockerfile
+  db:
+    container_name: db
+    image: mongo:latest
     ports:
-      - "6000:6000"
-    networks:
+      - 27017:27017
+    volumes:
+      - ./db/db:/data/db
+    networks: 
       - server_backend
 
 networks:
